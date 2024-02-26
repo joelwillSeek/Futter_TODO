@@ -32,7 +32,7 @@ class DB {
     return result;
   }
 
-  Future<List<TODO>?> getAllTodos() async {
+  Future<List<TODO>?> getAllTodo() async {
     final innerDb = await db;
 
     final List<Map<String, Object?>>? response = await innerDb?.query("todo");
@@ -45,7 +45,7 @@ class DB {
             "detail": detail as String,
             "date": date as DateTime
           } in response) {
-        mapToTodo.add(TODO(title, detail, date, id));
+        mapToTodo.add(TODO(title, detail, date)); //id));
       }
 
       return mapToTodo;

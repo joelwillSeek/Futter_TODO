@@ -1,21 +1,41 @@
 class TODO {
-  final int? id;
-  final String? title;
-  final String? detail;
-  final DateTime? date;
+  int _id = 0;
+  final String? _title;
+  final String? _detail;
+  final DateTime? _date;
 
-  TODO(this.title, this.detail, this.date, this.id);
+  TODO(this._title, this._detail, this._date);
 
   String get forPrint {
-    return "ID: $id, Title: $title, Description:$detail, Date:$date";
+    return "ID: $_id, Title: $_title, Description:$_detail, Date:$_date";
   }
 
   Map<String, Object?> get toMap {
     return {
-      "id": id,
+      "id": getID,
       "title": title,
       "detail": detail,
       "date": date,
     };
+  }
+
+  String? get title {
+    return _title;
+  }
+
+  int get getID {
+    return _id;
+  }
+
+  set setID(int value) {
+    _id = value;
+  }
+
+  String? get detail {
+    return _detail;
+  }
+
+  DateTime? get date {
+    return _date;
   }
 }
