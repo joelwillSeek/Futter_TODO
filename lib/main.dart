@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/database.dart';
-import 'package:flutter_todo/TheAPP.dart';
 import 'package:flutter_todo/todo.dart';
-import 'package:path/path.dart';
+import 'package:flutter_todo/todo_Card.dart';
 
 void main() {
   runApp(const MainApp());
@@ -22,12 +21,42 @@ class _MainAppState extends State<MainApp> {
 
   final navigatorState = GlobalKey<NavigatorState>();
 
+  Future<List<TODO>?> allTodo = getAllTodo();
+
   @override
   Widget build(BuildContext context) {
+    List<TODO>? myTodo;
+
+    allTodo.then((value) {
+      myTodo = value;
+    });
+
     return MaterialApp(
       navigatorKey: navigatorState,
       home: Scaffold(
-        body: const TheAPP(),
+        body: FutureBuilder(
+          future: allTodo,
+          builder: (context, snapshot) {
+            return ListView.builder(
+              itemCount: snapshot.data?.length ?? 0,
+              itemBuilder: (BuildContext context, int index) {
+                String title =
+                    snapshot.data?[index].title.toString() ?? "no data";
+                String detail =
+                    snapshot.data?[index].detail.toString() ?? "no data";
+                String date =
+                    snapshot.data?[index].date.toString() ?? "no data";
+
+                return TodoCard(
+                  title: title,
+                  detail: detail,
+                  date: date,
+                  getListFromDb: getListFromDb,
+                );
+              },
+            );
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             displayDialog(context);
@@ -88,8 +117,8 @@ class _MainAppState extends State<MainApp> {
                   } else {
                     createTodo(context);
                     Navigator.of(context).pop();
-                    setState(() {});
                   }
+                  getListFromDb();
                 },
                 child: const Text("Save")),
             TextButton(
@@ -128,4 +157,10 @@ class _MainAppState extends State<MainApp> {
 
   String getSuccessString(bool successful) =>
       successful ? "successful" : "unsuccessful";
+
+  void getListFromDb() {
+    setState(() {
+      allTodo = getAllTodo();
+    });
+  }
 }

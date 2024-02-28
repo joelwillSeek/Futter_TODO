@@ -18,6 +18,11 @@ Future<Database> openTheDatabase() async {
   return db;
 }
 
+Future<int> deleteTodo(String title) async {
+  final innerDb = await db;
+  return innerDb.rawDelete('delete from todo where title = ?', [title]);
+}
+
 Future<int?> insertTodo(TODO todo) async {
   final innerDb = await db;
 
@@ -26,6 +31,15 @@ Future<int?> insertTodo(TODO todo) async {
   if (kDebugMode) {
     print(response.toString());
   }
+
+  return response;
+}
+
+Future<int> updateTodo(String detail, String title) async {
+  final innerDb = await db;
+
+  final response = innerDb
+      .rawUpdate("update todo set detail = ? where title = ?", [detail, title]);
 
   return response;
 }
