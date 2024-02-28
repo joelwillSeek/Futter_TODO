@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/database.dart';
-import 'package:flutter_todo/main_app.dart';
+import 'package:flutter_todo/TheAPP.dart';
 import 'package:flutter_todo/todo.dart';
 import 'package:path/path.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
-  MainApp({super.key});
+class MainApp extends StatefulWidget {
+  const MainApp({super.key});
 
-  final DB database = DB();
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
 
+class _MainAppState extends State<MainApp> {
   TextEditingController titleEditBox = TextEditingController();
 
   TextEditingController detailEditBox = TextEditingController();
@@ -24,7 +27,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorState,
       home: Scaffold(
-        body: ,
+        body: const TheAPP(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             displayDialog(context);
@@ -77,10 +80,23 @@ class MainApp extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(onPressed: createTodo, child: Text("Save")),
+            TextButton(
+                onPressed: () {
+                  if (dialogFieldAreEmpty()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Fill All Fields")));
+                  } else {
+                    createTodo(context);
+                    Navigator.of(context).pop();
+                    setState(() {});
+                  }
+                },
+                child: const Text("Save")),
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  titleEditBox.text = "";
+                  detailEditBox.text = "";
                 },
                 child: const Text("Cancel"))
           ],
@@ -89,11 +105,27 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  void createTodo() {
-    TODO newTodo = TODO(titleEditBox.text, detailEditBox.text, DateTime.now());
-    database.insertTodo(newTodo).then((success) => {
-      success?
-    });
+  bool dialogFieldAreEmpty() =>
+      titleEditBox.text.trim() == "" && detailEditBox.text.trim() == "";
 
+  void createTodo(BuildContext context) {
+    DateTime currentDateAndTime = DateTime.now();
+
+    TODO newTodo = TODO(titleEditBox.text, detailEditBox.text,
+        "${currentDateAndTime.month}/${currentDateAndTime.day}/${currentDateAndTime.year}");
+
+    insertTodo(newTodo).then((success) {
+      String t;
+      if (success != null && success != 0) {
+        t = "successful";
+      } else {
+        t = "unsuccessful";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t)));
+    });
   }
+
+  String getSuccessString(bool successful) =>
+      successful ? "successful" : "unsuccessful";
 }
