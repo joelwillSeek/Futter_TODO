@@ -25,12 +25,6 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    List<TODO>? myTodo;
-
-    allTodo.then((value) {
-      myTodo = value;
-    });
-
     return MaterialApp(
       navigatorKey: navigatorState,
       home: Scaffold(

@@ -114,8 +114,7 @@ class TodoCard extends StatelessWidget {
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // titleEditBox.text = "";
-                  //detailEditBox.text = "";
+                  updateDetailEditText.text = "";
                 },
                 child: const Text("Cancel"))
           ],
